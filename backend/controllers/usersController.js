@@ -65,4 +65,33 @@ const confirm = async (req, res) => {
     console.log(error);
   }
 };
-export { register, autentication, confirm };
+
+const forgetPassword = async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    const error = new Error("El usuario no existe");
+    return res.status(404).json({ msg: error.message });
+  }
+
+  try {
+    user.token = generateId();
+    await user.save();
+    res.json({ msg: "Se ha enviado un correo para cambiar la contraseña" });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const comprobationToken = async (req, res) => {
+  const { token } = req.params;
+  const validToken = await User.findOne({ token });
+  if (validToken) {
+    res.json({ msg: "Token valido y el usuario existe" });
+  } else {
+    const error = new Error("Token no valido");
+    return res.status(404).json({ msg: error.message });
+  }
+};
+
+export { register, autentication, confirm, forgetPassword, comprobationToken };
