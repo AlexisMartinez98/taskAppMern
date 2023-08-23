@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
+//realiza el hash de la contraseña antes de guardarla en la base de datos
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     next();
@@ -37,6 +37,10 @@ userSchema.pre("save", async function (next) {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
+
+userSchema.methods.comparePassword = async function (passwordForm) {
+  return await bcrypt.compare(passwordForm, this.password);
+};
 
 const User = mongoose.model("User", userSchema);
 export default User;
