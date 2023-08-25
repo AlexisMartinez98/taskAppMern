@@ -6,13 +6,18 @@ import {
   confirm,
   forgetPassword,
   comprobationToken,
+  newPassword,
+  profil,
 } from "../controllers/usersController.js";
+import checkAuth from "../middleware/checkAuth.js";
 
 // autentication, register and users confirm
 router.post("/", register);
 router.post("/login", autentication);
 router.get("/confirm/:token", confirm);
 router.post("/forgetPassword", forgetPassword);
-router.get("/forgetPassword/:token", comprobationToken);
+router.route("/forgetPassword/:token").get(comprobationToken).post(newPassword);
+
+router.get("/profil", checkAuth, profil);
 
 export default router;

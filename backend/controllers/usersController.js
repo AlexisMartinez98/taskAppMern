@@ -94,4 +94,37 @@ const comprobationToken = async (req, res) => {
   }
 };
 
-export { register, autentication, confirm, forgetPassword, comprobationToken };
+const newPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  const userValidate = await User.findOne({ token });
+
+  if (userValidate) {
+    userValidate.password = password;
+    userValidate.token = "";
+    try {
+      await userValidate.save();
+      res.json({ msg: "Contraseña cambiada correctamente" });
+    } catch (error) {
+      console.log(error);
+    }
+  } else {
+    const error = new Error("Token no valido");
+    return res.status(404).json({ msg: error.message });
+  }
+};
+
+const profil = async () => {
+  console.log("desde perfil");
+};
+
+export {
+  register,
+  autentication,
+  confirm,
+  forgetPassword,
+  comprobationToken,
+  newPassword,
+  profil,
+};
